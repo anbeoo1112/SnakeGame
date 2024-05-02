@@ -8,10 +8,18 @@ public class Main {
         f.setBounds(10,10,905,700);
         f.setResizable(false);
         f.setVisible(true);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // chỉ giữ lại dòng này
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setBackground(Color.DARK_GRAY);
 
-        GamePlay game = new GamePlay();
-        f.add(game);
+        Model model = new Model();
+        View view = new View(model);
+        Control control = new Control(model, view);
+
+        f.add(view);
+        f.addKeyListener(control);
+
+        // Thêm ActionListener vào JFrame để xử lý các sự kiện thời gian
+        Timer timer = new Timer(model.getDelay(), control);
+        timer.start();
     }
 }
