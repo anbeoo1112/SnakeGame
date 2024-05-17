@@ -11,10 +11,12 @@ public class Control implements KeyListener, ActionListener {
     public Control(Model model, View view) {
         this.model = model;
         this.view = view;
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(model.getMoves()>0){
         if (model.isRight()) {
             for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
                 model.setSnakeY(i + 1, model.getSnakeYLength()[i]);
@@ -78,7 +80,8 @@ public class Control implements KeyListener, ActionListener {
                 }
             }
             view.repaint(); // Redraw the game state after updating the coordinates
-        }
+        }}
+        model.eatEnemy();
     }
 
     @Override

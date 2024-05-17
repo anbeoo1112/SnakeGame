@@ -13,21 +13,36 @@ public class View extends JPanel {
 
     public View(Model model) {
         this.model = model;
+        if(model.getMoves()==0){
+            model.setSnakeX(0,50);
+            model.setSnakeX(1,75);
+            model.setSnakeX(2,100);
+            model.setSnakeY(0,100);
+            model.setSnakeY(0,100);
+            model.setSnakeY(0,100);
+        }
     }
 
     public void paint(Graphics g) {
         super.paint(g);
+        titleImage=new ImageIcon("./Image/snaketitle.jpg");
+        titleImage.paintIcon(this,g,25,11);
         paintGameboard(g);
         paintScore(g);
         paintGameover(g);
         paintSnake(g);
         paintEnemy(g);
         g.dispose();
+        if(model.isGameOver()){
+            paintGameover(g);
+        }
     }
 
     public void paintGameboard(Graphics g) {
+        g.setColor(Color.white);
+        g.drawRect(24,74,851,577);
         g.setColor(Color.black);
-        g.fillRect(25, 75, 850, 575);
+        g.fillRect(25,75,850,575);
     }
 
     public void paintGameover(Graphics g) {

@@ -103,6 +103,14 @@ public class Model {
     }
 
     public boolean isGameOver() {
+        for (int i=1;i<lengthOfSnake;i++)
+            if(snakeXLength[i]==snakeXLength[0]&&snakeYLength[i]==snakeYLength[0]){
+                gameOver=true;
+                right=false;
+                left=false;
+                up=false;
+                down=false;
+            }
         return gameOver;
     }
 
@@ -150,6 +158,14 @@ public class Model {
         snakeXLength[x] = u;
     }public void setSnakeY(int y, int u){
         snakeYLength[y] = u;
+    }
+    public void eatEnemy(){
+        if(snakeXLength[0]==enemyXPos[xPos]&&snakeYLength[0]==enemyYPos[yPos]){
+            lengthOfSnake++;
+            scores++;
+            xPos=random.nextInt(34);
+            yPos=random.nextInt(23);
+        }
     }
 
 
