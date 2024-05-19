@@ -1,41 +1,40 @@
 import java.util.Random;
 
 public class Model {
-    private int[] snakeXLength = new int [750];
-    private int[] snakeYLength = new int [750];
+    private int[] snakeXLength = new int[750];
+    private int[] snakeYLength = new int[750];
     private boolean right = false;
     private boolean left = false;
     private boolean up = false;
     private boolean down = false;
-    private int delay = 100;
     private int lengthOfSnake = 3;
     private int moves = 0;
     private int scores = 0;
     private boolean gameOver = false;
-    private int[] enemyXPos = {25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,525,550,575,
-            600,625,650,675,700,725,750,775,800,825,850};
-    private int[] enemyYPos = {75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,525,550,575,
-            600,625};
+    private int[] enemyXPos = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575,
+            600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850};
+    private int[] enemyYPos = {75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575,
+            600, 625};
     private Random random = new Random();
     private int xPos = random.nextInt(34);
     private int yPos = random.nextInt(23);
-    public Model (){}
 
-    // Getter and setter methods for all the variables
+    public Model() {}
+
     public int[] getSnakeXLength() {
         return snakeXLength;
     }
 
-    public void setSnakeXLength(int[] snakeXLength) {
-        this.snakeXLength = snakeXLength;
+    public void setSnakeXLength(int i, int x) {
+        this.snakeXLength[i] = x;
     }
 
     public int[] getSnakeYLength() {
         return snakeYLength;
     }
 
-    public void setSnakeYLength(int[] snakeYLength) {
-        this.snakeYLength = snakeYLength;
+    public void setSnakeYLength(int i, int y) {
+        this.snakeYLength[i] = y;
     }
 
     public boolean isRight() {
@@ -70,14 +69,6 @@ public class Model {
         this.down = down;
     }
 
-    public int getDelay() {
-        return delay;
-    }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
     public int getLengthOfSnake() {
         return lengthOfSnake;
     }
@@ -103,14 +94,15 @@ public class Model {
     }
 
     public boolean isGameOver() {
-        for (int i=1;i<lengthOfSnake;i++)
-            if(snakeXLength[i]==snakeXLength[0]&&snakeYLength[i]==snakeYLength[0]){
-                gameOver=true;
-                right=false;
-                left=false;
-                up=false;
-                down=false;
+        for (int i = 1; i < lengthOfSnake; i++) {
+            if (snakeXLength[i] == snakeXLength[0] && snakeYLength[i] == snakeYLength[0]) {
+                gameOver = true;
+                right = false;
+                left = false;
+                up = false;
+                down = false;
             }
+        }
         return gameOver;
     }
 
@@ -122,16 +114,8 @@ public class Model {
         return enemyXPos;
     }
 
-    public void setEnemyXPos(int[] enemyXPos) {
-        this.enemyXPos = enemyXPos;
-    }
-
     public int[] getEnemyYPos() {
         return enemyYPos;
-    }
-
-    public void setEnemyYPos(int[] enemyYPos) {
-        this.enemyYPos = enemyYPos;
     }
 
     public int getXPos() {
@@ -149,24 +133,42 @@ public class Model {
     public void setYPos(int yPos) {
         this.yPos = yPos;
     }
-    public void setEnemy(){
-        Random random = new Random();
-        xPos=random.nextInt(34);
-        yPos=random.nextInt(23);
-    }
-    public void setSnakeX(int x, int u){
+
+    public void setSnakeX(int x, int u) {
         snakeXLength[x] = u;
-    }public void setSnakeY(int y, int u){
+    }
+
+    public void setSnakeY(int y, int u) {
         snakeYLength[y] = u;
     }
-    public void eatEnemy(){
-        if(snakeXLength[0]==enemyXPos[xPos]&&snakeYLength[0]==enemyYPos[yPos]){
-            lengthOfSnake++;
-            scores++;
-            xPos=random.nextInt(34);
-            yPos=random.nextInt(23);
-        }
+
+    public void resetGame() {
+        lengthOfSnake = 3;
+        moves = 0;
+        scores = 0;
+        gameOver = false;
+        right = true;
+        left = false;
+        up = false;
+        down = false;
+        resetSnakePosition();
     }
 
+    public void resetSnakePosition() {
+        setSnakeXLength(0, 100);
+        setSnakeXLength(1, 75);
+        setSnakeXLength(2, 50);
+        setSnakeYLength(0, 100);
+        setSnakeYLength(1, 100);
+        setSnakeYLength(2, 100);
+    }
 
+    public void eatEnemy() {
+        if (snakeXLength[0] == enemyXPos[xPos] && snakeYLength[0] == enemyYPos[yPos]) {
+            lengthOfSnake++;
+            scores++;
+            xPos = random.nextInt(34);
+            yPos = random.nextInt(23);
+        }
+    }
 }

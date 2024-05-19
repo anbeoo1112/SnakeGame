@@ -4,84 +4,74 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Control implements KeyListener, ActionListener {
+public class Control extends JPanel implements KeyListener, ActionListener {
     private Model model;
     private View view;
+    private Timer time;
+    private int delay = 100;
+    private boolean canChangeDirection = true;
 
     public Control(Model model, View view) {
         this.model = model;
         this.view = view;
-
+        model.setRight(true);
+        addKeyListener(this);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(true);
+        time = new Timer(delay, this);
+        time.start();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(model.getMoves()>0){
-        if (model.isRight()) {
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                model.setSnakeY(i + 1, model.getSnakeYLength()[i]);
-            }
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                if (i == 0) {
-                    model.setSnakeX(i, model.getSnakeXLength()[i] + 25);
-                } else {
-                    model.setSnakeX(i, model.getSnakeXLength()[i - 1]);
-                }
-                if(model.getSnakeXLength()[i] > 850){
-                    model.setSnakeX(i, 25);
-                }
-            }
-            view.repaint(); // Redraw the game state after updating the coordinates
-        }
-        if(model.isLeft()){
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                model.setSnakeY(i + 1, model.getSnakeYLength()[i]);
-            }
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                if (i == 0) {
-                    model.setSnakeX(i, model.getSnakeXLength()[i] - 25);
-                } else {
-                    model.setSnakeX(i, model.getSnakeXLength()[i - 1]);
-                }
-                if(model.getSnakeXLength()[i] < 25){
-                    model.setSnakeX(i, 850);
-                }
-            }
-            view.repaint();
-        }
-        if (model.isUp()) {
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                model.setSnakeX(i + 1, model.getSnakeXLength()[i]);
-            }
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                if (i == 0) {
-                    model.setSnakeY(i, model.getSnakeYLength()[i] - 25);
-                } else {
-                    model.setSnakeY(i, model.getSnakeYLength()[i - 1]);
-                }
-                if(model.getSnakeYLength()[i] < 75){
-                    model.setSnakeY(i, 625);
-                }
-            }
-            view.repaint(); // Redraw the game state after updating the coordinates
-        }
-        if (model.isDown()) {
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                model.setSnakeX(i + 1, model.getSnakeXLength()[i]);
-            }
-            for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
-                if (i == 0) {
-                    model.setSnakeY(i, model.getSnakeYLength()[i] + 25);
-                } else {
-                    model.setSnakeY(i, model.getSnakeYLength()[i - 1]);
-                }
-                if(model.getSnakeYLength()[i] > 625){
-                    model.setSnakeY(i, 75);
-                }
-            }
-            view.repaint(); // Redraw the game state after updating the coordinates
-        }}
         model.eatEnemy();
+        updateSnakeMovement();
+        view.repaint(); // Redraw the game state after updating the coordinates
+        canChangeDirection = true; // Allow direction change after each tick
+    }
+
+    private void updateSnakeMovement() {
+        if (model.isRight()) {
+            updateSnakeDirection(25, 0);
+            wrapAroundXAxis();
+        } else if (model.isLeft()) {
+            updateSnakeDirection(-25, 0);
+            wrapAroundXAxis();
+        } else if (model.isUp()) {
+            updateSnakeDirection(0, -25);
+            wrapAroundYAxis();
+        } else if (model.isDown()) {
+            updateSnakeDirection(0, 25);
+            wrapAroundYAxis();
+        }
+    }
+
+    private void updateSnakeDirection(int xIncrement, int yIncrement) {
+        for (int i = model.getLengthOfSnake() - 1; i >= 0; i--) {
+            if (i == 0) {
+                model.setSnakeX(i, model.getSnakeXLength()[i] + xIncrement);
+                model.setSnakeY(i, model.getSnakeYLength()[i] + yIncrement);
+            } else {
+                model.setSnakeX(i, model.getSnakeXLength()[i - 1]);
+                model.setSnakeY(i, model.getSnakeYLength()[i - 1]);
+            }
+        }
+    }
+
+    private void wrapAroundXAxis() {
+        if (model.getSnakeXLength()[0] > 850) {
+            model.setSnakeX(0, 25);
+        } else if (model.getSnakeXLength()[0] < 25) {
+            model.setSnakeX(0, 850);
+        }
+    }
+
+    private void wrapAroundYAxis() {
+        if (model.getSnakeYLength()[0] > 625) {
+            model.setSnakeY(0, 75);
+        } else if (model.getSnakeYLength()[0] < 75) {
+            model.setSnakeY(0, 625);
+        }
     }
 
     @Override
@@ -91,57 +81,37 @@ public class Control implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-            model.setMoves(model.getMoves() + 1);
-            if(!model.isLeft()) {
+        int key = e.getKeyCode();
+
+        if (canChangeDirection) {
+            if (key == KeyEvent.VK_RIGHT && !model.isLeft()) {
+                model.setMoves(model.getMoves() + 1);
                 model.setRight(true);
-            } else {
-                model.setLeft(true);
-                model.setRight(false);
-            }
-            model.setUp(false);
-            model.setDown(false);
-        }
-        if(e.getKeyCode() == KeyEvent.VK_LEFT){
-            model.setMoves(model.getMoves() + 1);
-            if(!model.isRight()) {
-                model.setLeft(true);
-            } else {
-                model.setLeft(false);
-                model.setRight(true);
-            }
-            model.setUp(false);
-            model.setDown(false);
-        }
-        if(e.getKeyCode() == KeyEvent.VK_UP){
-            model.setMoves(model.getMoves() + 1);
-            model.setRight(false);
-            model.setLeft(false);
-            if(!model.isDown()){
-                model.setUp(true);
-            } else {
-                model.setDown(true);
                 model.setUp(false);
-            }
-        }
-        if(e.getKeyCode() == KeyEvent.VK_DOWN){
-            model.setMoves(model.getMoves() + 1);
-            model.setRight(false);
-            model.setLeft(false);
-            if(!model.isUp()){
-                model.setDown(true);
-            } else {
-                model.setUp(true);
                 model.setDown(false);
+            } else if (key == KeyEvent.VK_LEFT && !model.isRight()) {
+                model.setMoves(model.getMoves() + 1);
+                model.setLeft(true);
+                model.setUp(false);
+                model.setDown(false);
+            } else if (key == KeyEvent.VK_UP && !model.isDown()) {
+                model.setMoves(model.getMoves() + 1);
+                model.setUp(true);
+                model.setRight(false);
+                model.setLeft(false);
+            } else if (key == KeyEvent.VK_DOWN && !model.isUp()) {
+                model.setMoves(model.getMoves() + 1);
+                model.setDown(true);
+                model.setRight(false);
+                model.setLeft(false);
             }
+
+            canChangeDirection = false; // Prevent direction change until next tick
         }
-        if(model.isGameOver()){
-            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                model.setLengthOfSnake(3);
-                model.setMoves(0);
-                model.setScores(0);
-                view.repaint();
-            }
+
+        if (model.isGameOver() && key == KeyEvent.VK_SPACE) {
+            model.resetGame();
+            view.repaint();
         }
     }
 
