@@ -63,7 +63,7 @@ public class View extends JPanel {
         g.setFont(new Font("arial", Font.BOLD, 50));
         g.drawString("GAME OVER", 300, 300); // Vẽ thông báo "GAME OVER"
         g.setFont(new Font("arial", Font.BOLD, 20));
-        g.drawString("High Score: ", 350, 340);
+        g.drawString("High Score: " + model.getHighScore(), 350, 340);
         g.setFont(new Font("arial", Font.BOLD, 20));
         g.drawString("Space to restart", 350, 380); // Vẽ thông báo "Space to restart"
     }

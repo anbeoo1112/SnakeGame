@@ -1,5 +1,6 @@
 package Model;
 
+import java.io.*;
 import java.util.Random;
 
 public class Model {
@@ -23,6 +24,7 @@ public class Model {
 
     // Biến lưu điểm số
     private int scores = 0;
+
     // Biến lưu điểm cao nhất
     private int highScore;
 
@@ -30,10 +32,14 @@ public class Model {
     private boolean gameOver = false;
 
     // Các mảng lưu trữ các tọa độ X và Y có thể của kẻ thù
-    private int[] enemyXPos = {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575,
-            600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850};
-    private int[] enemyYPos = {75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575,
-            600, 625};
+    private int[] enemyXPos = {
+            25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575,
+            600, 625, 650, 675, 700, 725, 750, 775, 800, 825, 850
+    };
+    private int[] enemyYPos = {
+            75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575,
+            600, 625
+    };
 
     // Bộ tạo số ngẫu nhiên để đặt kẻ thù ở các vị trí ngẫu nhiên
     private Random random = new Random();
@@ -42,8 +48,11 @@ public class Model {
     private int xPos = random.nextInt(34);
     private int yPos = random.nextInt(23);
 
-    // Hàm khởi tạo cho lớp Model.Model
-    public Model() {}
+    // Hàm khởi tạo cho lớp Model
+    public Model() {
+        loadHighScore();
+        resetGame();
+    }
 
     // Phương thức getter và setter cho tọa độ X của rắn
     public int[] getSnakeXLength() {
@@ -123,6 +132,11 @@ public class Model {
         this.scores = scores;
     }
 
+    // Phương thức getter cho điểm cao nhất
+    public int getHighScore() {
+        return highScore;
+    }
+
     // Phương thức kiểm tra trò chơi kết thúc
     public boolean isGameOver() {
         for (int i = 1; i < lengthOfSnake; i++) {
@@ -134,6 +148,14 @@ public class Model {
                 down = false;
             }
         }
+
+        if (gameOver) {
+            if (scores > highScore) {
+                highScore = scores;
+                saveHighScore();
+            }
+        }
+
         return gameOver;
     }
 
@@ -200,6 +222,32 @@ public class Model {
             scores++;
             xPos = random.nextInt(34);
             yPos = random.nextInt(23);
+        }
+    }
+
+    // Phương thức tải điểm cao nhất từ tệp
+    private void loadHighScore() {
+        try {
+            File file = new File("src/Model/highScore.txt");
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = reader.readLine();
+            if (line != null) {
+                highScore = Integer.parseInt(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            highScore = 0;
+        }
+    }
+
+    // Phương thức lưu điểm cao nhất vào tệp
+    private void saveHighScore() {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("src/Model/highScore.txt"));
+            writer.write(String.valueOf(highScore));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
