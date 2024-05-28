@@ -1,3 +1,8 @@
+package Control;
+
+import Model.Model;
+import View.View;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,7 +20,7 @@ public class Control extends JPanel implements KeyListener, ActionListener {
     // Biến để kiểm tra xem có thể thay đổi hướng di chuyển hay không
     private boolean canChangeDirection = true;
 
-    // Hàm khởi tạo cho lớp Control, nhận vào đối tượng model và view
+    // Hàm khởi tạo cho lớp Control.Control, nhận vào đối tượng model và view
     public Control(Model model, View view) {
         this.model = model;
         this.view = view;

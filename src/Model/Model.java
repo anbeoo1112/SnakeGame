@@ -1,3 +1,5 @@
+package Model;
+
 import java.util.Random;
 
 public class Model {
@@ -21,6 +23,8 @@ public class Model {
 
     // Biến lưu điểm số
     private int scores = 0;
+    // Biến lưu điểm cao nhất
+    private int highScore;
 
     // Biến boolean để kiểm tra trò chơi kết thúc hay chưa
     private boolean gameOver = false;
@@ -38,7 +42,7 @@ public class Model {
     private int xPos = random.nextInt(34);
     private int yPos = random.nextInt(23);
 
-    // Hàm khởi tạo cho lớp Model
+    // Hàm khởi tạo cho lớp Model.Model
     public Model() {}
 
     // Phương thức getter và setter cho tọa độ X của rắn
